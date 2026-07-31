@@ -182,6 +182,14 @@
       <div class="muted small">Tieni premuto sul valore PF per aprire questo pannello.</div>
     </div>
   </div>
-<script src="app.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('SW registered', reg))
+        .catch(err => console.log('SW failed', err));
+    }
+  </script> <!-- QUI CHIUDIAMO IL TAG SCRIPT -->
+
+  <script src="app.js"></script>
 </body>
 </html>
