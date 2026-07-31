@@ -1,8 +1,8 @@
 {
   "name": "Belial Trial",
   "short_name": "Belial Trial",
-  "start_url": "https://thebelialtrial.netlify.app/",
-  "scope": "/",
+  "start_url": "/belial-trial/",
+  "scope": "/belial-trial/",
   "display": "standalone",
   "theme_color": "#5d5454",
   "background_color": "#6d0404",

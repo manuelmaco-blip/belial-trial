@@ -959,7 +959,7 @@ window.addEventListener('beforeunload', () => {
 async function registerSW() {
   if ('serviceWorker' in navigator) {
     try {
-      await navigator.serviceWorker.register('./service-worker.js');
+      await navigator.serviceWorker.register('/belial-trial/service-worker.js');
     } catch (err) {
       console.warn('SW registration failed', err);
     }
