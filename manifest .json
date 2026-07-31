@@ -1,0 +1,26 @@
+{
+  "name": "Belial Trial",
+  "short_name": "Belial Trial",
+  "start_url": "https://thebelialtrial.netlify.app/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#5d5454",
+  "background_color": "#6d0404",
+  "orientation": "any",
+  "lang": "it",
+  "description": "Belial Trial first edition",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

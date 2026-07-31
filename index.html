@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#150f23" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Belial Trial</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toast" class="toast hidden"></div>
+
+  <input id="importFile" type="file" accept="application/json" hidden />
+
+  <template id="tpl-home">
+    <section class="view">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">Combat Tracker</div>
+          <h1>Belial Trial</h1>
+        </div>
+        <button class="icon-btn" data-action="export-all" title="Esporta backup">⤓</button>
+      </header>
+
+      <div class="panel hero">
+        <div class="hero-copy">
+          <strong>Le tue battaglie salvate</strong>
+          <p>Apri un combattimento, duplicalo, rinominalo o eliminane uno con conferma.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="primary" data-action="new-combat">+ Nuovo combattimento</button>
+          <button class="secondary" data-action="import-all">Importa backup</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Combattimenti</h2>
+          <input id="homeSearch" class="search" type="search" placeholder="Cerca combattimento..." />
+        </div>
+        <div id="combatList" class="combat-list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Preferiti</h2>
+          <span class="muted">Tap rapido per aggiungere al combattimento nuovo</span>
+        </div>
+        <div id="favoritesList" class="favorites-list"></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tpl-editor">
+    <section class="view">
+      <header class="topbar">
+        <button class="icon-btn" data-action="back-home" title="Indietro">←</button>
+        <div class="title-wrap">
+          <div class="eyebrow">Preparazione</div>
+          <input id="combatName" class="title-input" type="text" placeholder="Nome combattimento" />
+        </div>
+        <button class="icon-btn" data-action="start-battle" title="Inizia combattimento">▶</button>
+      </header>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Personaggi</h2>
+          <button class="secondary compact" data-action="undo">Annulla ultima modifica</button>
+        </div>
+
+        <div class="form-grid">
+          <input id="pName" type="text" placeholder="Nome" />
+          <input id="pHp" type="number" inputmode="numeric" placeholder="PF" />
+          <input id="pInit" type="number" inputmode="numeric" placeholder="Iniziativa" />
+          <select id="pRole">
+            <option value="ally">Alleato</option>
+            <option value="enemy">Nemico</option>
+            <option value="npc">PNG</option>
+          </select>
+          <input id="pNote" class="wide" type="text" placeholder="Note" />
+          <button id="addParticipant" class="primary wide">+ Aggiungi personaggio</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Preferiti rapidi</h2>
+          <span class="muted">Tocca per copiare nel combattimento</span>
+        </div>
+        <div id="editorFavorites" class="chips"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Lista</h2>
+          <input id="editorSearch" class="search" type="search" placeholder="Cerca nella lista..." />
+        </div>
+        <div id="editorList" class="combat-list"></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tpl-battle">
+    <section class="view battle-view">
+      <header class="topbar sticky">
+        <button class="icon-btn" data-action="back-editor" title="Torna all'editor">←</button>
+        <div class="title-wrap">
+          <div class="eyebrow">Combattimento</div>
+          <div class="battle-title-row">
+            <input id="battleName" class="title-input" type="text" placeholder="Nome combattimento" />
+            <span id="roundBadge" class="badge">Round 1</span>
+          </div>
+        </div>
+        <button class="icon-btn" data-action="undo" title="Annulla ultima modifica">↶</button>
+      </header>
+
+      <div class="battle-toolbar">
+        <input id="battleSearch" class="search" type="search" placeholder="Cerca personaggio..." />
+        <button class="secondary compact" data-action="next-turn">Prossimo turno</button>
+      </div>
+
+      <div class="panel status-bar">
+        <div>
+          <div class="muted">Turno corrente</div>
+          <strong id="currentTurnLabel">—</strong>
+        </div>
+        <div class="status-meta">
+          <span id="participantCount" class="badge">0</span>
+          <span id="battleState" class="badge subtle">In corso</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <h2>Ordine iniziativa</h2>
+          <button class="secondary compact" data-action="reset-turn">Reset turno</button>
+        </div>
+        <div id="battleList" class="combat-list"></div>
+      </div>
+    </section>
+  </template>
+
+  <div id="modalHost" class="modal-host hidden">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow">Modifica rapida</div>
+          <h3 id="editTitle">Personaggio</h3>
+        </div>
+        <button class="icon-btn" data-action="close-modal">✕</button>
+      </div>
+      <div class="form-grid modal-grid">
+        <input id="editName" type="text" placeholder="Nome" />
+        <input id="editHp" type="number" inputmode="numeric" placeholder="PF attuali" />
+        <input id="editMaxHp" type="number" inputmode="numeric" placeholder="PF massimi" />
+        <input id="editInit" type="number" inputmode="numeric" placeholder="Iniziativa" />
+        <select id="editRole">
+          <option value="ally">Alleato</option>
+          <option value="enemy">Nemico</option>
+          <option value="npc">PNG</option>
+        </select>
+        <input id="editNote" class="wide" type="text" placeholder="Note" />
+        <label class="check wide"><input id="editFavorite" type="checkbox" /> Nei preferiti</label>
+      </div>
+      <div class="quick-row">
+        <button class="danger compact" data-action="hp-adjust" data-delta="-10">-10</button>
+        <button class="danger compact" data-action="hp-adjust" data-delta="-5">-5</button>
+        <button class="danger compact" data-action="hp-adjust" data-delta="-1">-1</button>
+        <button class="success compact" data-action="hp-adjust" data-delta="1">+1</button>
+        <button class="success compact" data-action="hp-adjust" data-delta="5">+5</button>
+      </div>
+      <div class="modal-actions">
+        <button class="secondary" data-action="delete-participant">Elimina</button>
+        <button class="primary" data-action="save-participant">Salva</button>
+      </div>
+      <div class="muted small">Tieni premuto sul valore PF per aprire questo pannello.</div>
+    </div>
+  </div>
+<script src="app.js"></script>
+</body>
+</html>
