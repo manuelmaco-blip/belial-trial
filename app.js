@@ -987,3 +987,12 @@ function init() {
 }
 
 init();
+
+if (navigator.userAgent.includes('Android')){
+  if(window.screen && window.screen.orientation && window.screen.orientation.lock){
+    window.screen.orientation.lock('portrait').catch(() => {})
+  }
+  if(window.Android && typeof window.Android.setFullscreen === 'function'){
+    window.Android.setFullscreen(true);
+  }
+}
